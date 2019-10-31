@@ -47,7 +47,7 @@ public class WindowWrap<T> {
     public WindowWrap(long windowLengthInMs, long windowStart, T value) {
         this.windowLengthInMs = windowLengthInMs;
         this.windowStart = windowStart;
-        this.value = value;
+        this.value = value; // MetricBucket
     }
 
     public long windowLength() {

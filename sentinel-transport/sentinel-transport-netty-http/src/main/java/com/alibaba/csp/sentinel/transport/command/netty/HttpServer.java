@@ -52,7 +52,7 @@ public final class HttpServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .childHandler(new HttpServerInitializer());
+                .childHandler(new HttpServerInitializer()); // pipeline
             int port;
             try {
                 if (StringUtil.isEmpty(TransportConfig.getPort())) {
@@ -70,7 +70,7 @@ public final class HttpServer {
             ChannelFuture channelFuture = null;
             // loop for an successful binding
             while (true) {
-                int newPort = getNewPort(port, retryCount);
+                int newPort = getNewPort(port, retryCount); // 每尝试3次，增加端口号再尝试
                 try {
                     channelFuture = b.bind(newPort).sync();
                     TransportConfig.setRuntimePort(newPort);

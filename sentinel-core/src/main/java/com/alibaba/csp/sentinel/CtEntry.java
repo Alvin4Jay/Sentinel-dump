@@ -87,10 +87,10 @@ class CtEntry extends Entry {
                 if (parent != null) {
                     ((CtEntry)parent).child = null;
                 }
-                if (parent == null) {
+                if (parent == null) { // 该entry如果是最顶层的入口，则其退出时将线程上下文中的context置为空
                     // Default context (auto entered) will be exited automatically.
                     if (ContextUtil.isDefaultContext(context)) {
-                        ContextUtil.exit();
+                        ContextUtil.exit(); // context置空
                     }
                 }
                 // Clean the reference of context in current entry to avoid duplicate exit.

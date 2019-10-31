@@ -312,7 +312,7 @@ public class SystemRuleManager {
             throw new SystemBlockException(resourceWrapper.getName(), "thread");
         }
 
-        double rt = Constants.ENTRY_NODE == null ? 0 : Constants.ENTRY_NODE.avgRt();
+        double rt = Constants.ENTRY_NODE == null ? 0 : Constants.ENTRY_NODE.avgRt(); // 平均rt
         if (rt > maxRt) {
             throw new SystemBlockException(resourceWrapper.getName(), "rt");
         }

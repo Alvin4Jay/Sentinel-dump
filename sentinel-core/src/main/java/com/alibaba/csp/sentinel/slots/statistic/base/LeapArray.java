@@ -118,7 +118,7 @@ public abstract class LeapArray<T> {
 
         int idx = calculateTimeIdx(timeMillis);
         // Calculate current bucket start time.
-        long windowStart = calculateWindowStart(timeMillis);
+        long windowStart = calculateWindowStart(timeMillis); // 窗口起始时间点
 
         /*
          * Get bucket item at given time from the array.

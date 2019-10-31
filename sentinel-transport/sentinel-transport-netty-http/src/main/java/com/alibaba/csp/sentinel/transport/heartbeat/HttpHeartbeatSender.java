@@ -58,7 +58,7 @@ public class HttpHeartbeatSender implements HeartbeatSender {
 
     public HttpHeartbeatSender() {
         this.client = HttpClients.createDefault();
-        List<Tuple2<String, Integer>> dashboardList = parseDashboardList();
+        List<Tuple2<String, Integer>> dashboardList = parseDashboardList(); // 获取ip port
         if (dashboardList == null || dashboardList.isEmpty()) {
             RecordLog.info("[NettyHttpHeartbeatSender] No dashboard available");
         } else {
@@ -115,8 +115,8 @@ public class HttpHeartbeatSender implements HeartbeatSender {
             .setParameter("v", Constants.SENTINEL_VERSION)
             .setParameter("version", String.valueOf(System.currentTimeMillis()))
             .setParameter("hostname", HostNameUtil.getHostName())
-            .setParameter("ip", TransportConfig.getHeartbeatClientIp())
-            .setParameter("port", TransportConfig.getPort())
+            .setParameter("ip", TransportConfig.getHeartbeatClientIp()) // 客户端ip
+            .setParameter("port", TransportConfig.getPort()) // 服务端port
             .setParameter("pid", String.valueOf(PidUtil.getPid()));
 
         HttpGet request = new HttpGet(uriBuilder.build());

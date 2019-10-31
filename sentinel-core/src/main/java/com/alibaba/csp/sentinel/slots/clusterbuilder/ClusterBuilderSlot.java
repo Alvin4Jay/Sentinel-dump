@@ -79,6 +79,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
                 if (clusterNode == null) {
                     // Create the cluster node.
                     clusterNode = new ClusterNode();
+                    // 将clusterNode保存到全局的map中去
                     HashMap<ResourceWrapper, ClusterNode> newMap = new HashMap<>(Math.max(clusterNodeMap.size(), 16));
                     newMap.putAll(clusterNodeMap);
                     newMap.put(node.getId(), clusterNode);
@@ -87,7 +88,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
                 }
             }
         }
-        node.setClusterNode(clusterNode);
+        node.setClusterNode(clusterNode); // 将clusterNode塞到DefaultNode中去
 
         /*
          * if context origin is set, we should get or create a new {@link Node} of
@@ -95,7 +96,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
          */
         if (!"".equals(context.getOrigin())) {
             Node originNode = node.getClusterNode().getOrCreateOriginNode(context.getOrigin());
-            context.getCurEntry().setOriginNode(originNode);
+            context.getCurEntry().setOriginNode(originNode); // 当前entry设置源节点
         }
 
         fireEntry(context, resourceWrapper, node, count, prioritized, args);

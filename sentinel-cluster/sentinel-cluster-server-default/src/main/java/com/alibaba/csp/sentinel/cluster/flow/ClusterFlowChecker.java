@@ -43,7 +43,7 @@ final class ClusterFlowChecker {
             case ClusterRuleConstant.FLOW_THRESHOLD_AVG_LOCAL:
             default:
                 int connectedCount = ClusterFlowRuleManager.getConnectedCount(rule.getClusterConfig().getFlowId());
-                return count * connectedCount;
+                return count * connectedCount; // 连接的客户端*平均值
         }
     }
 
@@ -52,8 +52,15 @@ final class ClusterFlowChecker {
         return GlobalRequestLimiter.tryPass(namespace);
     }
 
+    /**
+     * 集群限流检查
+     * @param rule 集群限流规则
+     * @param acquireCount 需要的数目token
+     * @param prioritized
+     * @return 限流结果
+     */
     static TokenResult acquireClusterToken(/*@Valid*/ FlowRule rule, int acquireCount, boolean prioritized) {
-        Long id = rule.getClusterConfig().getFlowId();
+        Long id = rule.getClusterConfig().getFlowId(); // 规则全局id
 
         if (!allowProceed(id)) {
             return new TokenResult(TokenResultStatus.TOO_MANY_REQUEST);
@@ -64,11 +71,11 @@ final class ClusterFlowChecker {
             return new TokenResult(TokenResultStatus.FAIL);
         }
 
-        double latestQps = metric.getAvg(ClusterFlowEvent.PASS_REQUEST);
-        double globalThreshold = calcGlobalThreshold(rule) * ClusterServerConfigManager.getExceedCount();
-        double nextRemaining = globalThreshold - latestQps - acquireCount;
+        double latestQps = metric.getAvg(ClusterFlowEvent.PASS_REQUEST); // 前面请求统计的QPS
+        double globalThreshold = calcGlobalThreshold(rule) * ClusterServerConfigManager.getExceedCount(); // 阈值
+        double nextRemaining = globalThreshold - latestQps - acquireCount; // 减去目前请求的count，得到剩余的count
 
-        if (nextRemaining >= 0) {
+        if (nextRemaining >= 0) { // 当前请求token通过
             // TODO: checking logic and metric operation should be separated.
             metric.add(ClusterFlowEvent.PASS, acquireCount);
             metric.add(ClusterFlowEvent.PASS_REQUEST, 1);
@@ -80,9 +87,9 @@ final class ClusterFlowChecker {
             return new TokenResult(TokenResultStatus.OK)
                 .setRemaining((int) nextRemaining)
                 .setWaitInMs(0);
-        } else {
+        } else { // 请求不通过，QPS达到阈值
             if (prioritized) {
-                // Try to occupy incoming buckets.
+                // Try to occupy incoming buckets. TODO 待看
                 double occupyAvg = metric.getAvg(ClusterFlowEvent.WAITING);
                 if (occupyAvg <= ClusterServerConfigManager.getMaxOccupyRatio() * globalThreshold) {
                     int waitInMs = metric.tryOccupyNext(ClusterFlowEvent.PASS, acquireCount, globalThreshold);
@@ -96,7 +103,7 @@ final class ClusterFlowChecker {
                     // Or else occupy failed, should be blocked.
                 }
             }
-            // Blocked.
+            // Blocked. 限流
             metric.add(ClusterFlowEvent.BLOCK, acquireCount);
             metric.add(ClusterFlowEvent.BLOCK_REQUEST, 1);
             ClusterServerStatLogUtil.log("flow|block|" + id, acquireCount);

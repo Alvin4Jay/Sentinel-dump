@@ -72,6 +72,11 @@ public class WarmUpController implements TrafficShapingController {
     protected AtomicLong storedTokens = new AtomicLong(0);
     protected AtomicLong lastFilledTime = new AtomicLong(0);
 
+    /**
+     * @param count QPS阈值
+     * @param warmUpPeriodInSec 预热时间
+     * @param coldFactor 冷却因子
+     */
     public WarmUpController(double count, int warmUpPeriodInSec, int coldFactor) {
         construct(count, warmUpPeriodInSec, coldFactor);
     }
@@ -80,6 +85,11 @@ public class WarmUpController implements TrafficShapingController {
         construct(count, warmUpPeriodInSec, 3);
     }
 
+    /**
+     * @param count QPS阈值
+     * @param warmUpPeriodInSec 预热时间
+     * @param coldFactor 冷却因子
+     */
     private void construct(double count, int warmUpPeriodInSec, int coldFactor) {
 
         if (coldFactor <= 1) {

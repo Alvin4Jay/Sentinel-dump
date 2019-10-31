@@ -50,7 +50,7 @@ public class MetricBucket {
     }
 
     private void initMinRt() {
-        this.minRt = Constants.TIME_DROP_VALVE;
+        this.minRt = Constants.TIME_DROP_VALVE; // 默认4900ms
     }
 
     /**
@@ -127,7 +127,7 @@ public class MetricBucket {
         add(MetricEvent.RT, rt);
 
         // Not thread-safe, but it's okay.
-        if (rt < minRt) {
+        if (rt < minRt) { // 4900ms
             minRt = rt;
         }
     }

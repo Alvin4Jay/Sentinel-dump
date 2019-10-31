@@ -150,7 +150,7 @@ public class NodeSelectorSlot extends AbstractLinkedProcessorSlot<Object> {
          * The answer is all {@link DefaultNode}s with same resource name share one
          * {@link ClusterNode}. See {@link ClusterBuilderSlot} for detail.
          */
-        DefaultNode node = map.get(context.getName());
+        DefaultNode node = map.get(context.getName()); // 根据「上下文」的名称获取DefaultNode
         if (node == null) {
             synchronized (this) {
                 node = map.get(context.getName());
@@ -161,12 +161,18 @@ public class NodeSelectorSlot extends AbstractLinkedProcessorSlot<Object> {
                     cacheMap.put(context.getName(), node);
                     map = cacheMap;
                     // Build invocation tree
+                    // 将当前node作为「上下文」的最后一个节点的子节点添加进去
+                    // 如果context的curEntry.parent.curNode为null，则添加到entranceNode中去
+                    // 否则添加到context的curEntry.parent.curNode中去
                     ((DefaultNode) context.getLastNode()).addChild(node);
                 }
 
             }
         }
 
+        // 将该节点设置为「上下文」中的当前节点
+        // 实际是将当前节点赋值给context中curEntry的curNode
+        // 在Context的getLastNode中会用到在此处设置的curNode
         context.setCurNode(node);
         fireEntry(context, resourceWrapper, node, count, prioritized, args);
     }

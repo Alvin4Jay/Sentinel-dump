@@ -57,7 +57,7 @@ public class DefaultController implements TrafficShapingController {
                 if (waitInMs < OccupyTimeoutProperty.getOccupyTimeout()) {
                     node.addWaitingRequest(currentTime + waitInMs, acquireCount);
                     node.addOccupiedPass(acquireCount);
-                    sleep(waitInMs);
+                    sleep(waitInMs); // 睡眠
 
                     // PriorityWaitException indicates that the request will pass after waiting for {@link @waitInMs}.
                     throw new PriorityWaitException(waitInMs);
@@ -72,6 +72,7 @@ public class DefaultController implements TrafficShapingController {
         if (node == null) {
             return DEFAULT_AVG_USED_TOKENS;
         }
+        // 根据线程数或者qps进行限流
         return grade == RuleConstant.FLOW_GRADE_THREAD ? node.curThreadNum() : (int)(node.passQps());
     }
 

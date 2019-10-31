@@ -120,7 +120,7 @@ public class ContextUtil {
     protected static Context trueEnter(String name, String origin) {
         Context context = contextHolder.get();
         if (context == null) {
-            Map<String, DefaultNode> localCacheNameMap = contextNameNodeMap;
+            Map<String, DefaultNode> localCacheNameMap = contextNameNodeMap; // <context name, EntranceNode>
             DefaultNode node = localCacheNameMap.get(name);
             if (node == null) {
                 if (localCacheNameMap.size() > Constants.MAX_CONTEXT_NAME_SIZE) {

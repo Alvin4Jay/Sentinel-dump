@@ -26,7 +26,7 @@ import com.alibaba.csp.sentinel.slots.statistic.StatisticSlotCallbackRegistry;
  * @author Eric Zhao
  * @since 0.2.0
  */
-public class ParamFlowStatisticSlotCallbackInit implements InitFunc {
+public class ParamFlowStatisticSlotCallbackInit implements InitFunc { // 参数流控
 
     @Override
     public void init() {

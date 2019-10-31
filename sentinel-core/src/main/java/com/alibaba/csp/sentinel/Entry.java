@@ -52,7 +52,7 @@ public abstract class Entry implements AutoCloseable {
 
     private static final Object[] OBJECTS0 = new Object[0];
 
-    private long createTime;
+    private long createTime; // 用于计算响应时间RT
     private Node curNode;
     /**
      * {@link Node} of the specific origin, Usually the origin is the Service Consumer.

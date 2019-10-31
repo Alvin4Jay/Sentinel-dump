@@ -38,6 +38,7 @@ public final class TokenClientProvider {
     }
 
     private static void resolveTokenClientInstance() {
+        // 找到第一个ClusterTokenClient实现
         ClusterTokenClient resolvedClient = SpiLoader.loadFirstInstance(ClusterTokenClient.class);
         if (resolvedClient == null) {
             RecordLog.info(

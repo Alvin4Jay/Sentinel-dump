@@ -76,10 +76,10 @@ public final class SpiLoader {
 
             SpiOrderWrapper<T> w = null;
             for (T spi : serviceLoader) {
-                int order = SpiOrderResolver.resolveOrder(spi);
+                int order = SpiOrderResolver.resolveOrder(spi); // 解析order
                 RecordLog.info("[SpiLoader] Found {0} SPI: {1} with order " + order, clazz.getSimpleName(),
                     spi.getClass().getCanonicalName());
-                if (w == null || order < w.order) {
+                if (w == null || order < w.order) { // order越小，优先级越高
                     w = new SpiOrderWrapper<>(order, spi);
                 }
             }

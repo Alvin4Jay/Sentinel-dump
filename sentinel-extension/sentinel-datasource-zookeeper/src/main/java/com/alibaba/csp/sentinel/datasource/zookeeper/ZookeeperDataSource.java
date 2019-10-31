@@ -85,11 +85,11 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
     }
 
     private void init(final String serverAddr, final List<AuthInfo> authInfos) {
-        initZookeeperListener(serverAddr, authInfos);
+        initZookeeperListener(serverAddr, authInfos); // 连接zk，对目标几点设置监听器
         loadInitialConfig();
     }
 
-    private void loadInitialConfig() {
+    private void loadInitialConfig() { // 初始化
         try {
             T newValue = loadConfig();
             if (newValue == null) {
@@ -112,7 +112,7 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
                         T newValue = loadConfig();
                         RecordLog.info(String.format("[ZookeeperDataSource] New property value received for (%s, %s): %s",
                                 serverAddr, path, newValue));
-                        // Update the new value to the property.
+                        // Update the new value to the property. getProperty(): DynamicSentinelProperty
                         getProperty().updateValue(newValue);
                     } catch (Exception ex) {
                         RecordLog.warn("[ZookeeperDataSource] loadConfig exception", ex);
@@ -137,7 +137,7 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
                                     build();
                         }
                         this.zkClient = zc;
-                        this.zkClient.start();
+                        this.zkClient.start(); // 连接zk Server
                         Map<String, CuratorFramework> newZkClientMap = new HashMap<>(zkClientMap.size());
                         newZkClientMap.putAll(zkClientMap);
                         newZkClientMap.put(zkKey, zc);
@@ -149,8 +149,8 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
             }
 
             this.nodeCache = new NodeCache(this.zkClient, this.path);
-            this.nodeCache.getListenable().addListener(this.listener, this.pool);
-            this.nodeCache.start();
+            this.nodeCache.getListenable().addListener(this.listener, this.pool); // 设置监听器
+            this.nodeCache.start(); // 启动节点缓存
         } catch (Exception e) {
             RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
             e.printStackTrace();
@@ -163,7 +163,7 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
             throw new IllegalStateException("Zookeeper has not been initialized or error occurred");
         }
         String configInfo = null;
-        ChildData childData = nodeCache.getCurrentData();
+        ChildData childData = nodeCache.getCurrentData(); // 获取节点数据
         if (null != childData && childData.getData() != null) {
 
             configInfo = new String(childData.getData());

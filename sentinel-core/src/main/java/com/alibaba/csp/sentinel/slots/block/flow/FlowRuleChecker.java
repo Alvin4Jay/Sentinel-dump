@@ -46,10 +46,10 @@ public class FlowRuleChecker {
         if (ruleProvider == null || resource == null) {
             return;
         }
-        Collection<FlowRule> rules = ruleProvider.apply(resource.getName());
+        Collection<FlowRule> rules = ruleProvider.apply(resource.getName()); // 根据资源获取限流规则
         if (rules != null) {
             for (FlowRule rule : rules) {
-                if (!canPassCheck(rule, context, node, count, prioritized)) {
+                if (!canPassCheck(rule, context, node, count, prioritized)) { // 限流检查
                     throw new FlowException(rule.getLimitApp(), rule);
                 }
             }
@@ -64,15 +64,15 @@ public class FlowRuleChecker {
     public boolean canPassCheck(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                                     boolean prioritized) {
         String limitApp = rule.getLimitApp();
-        if (limitApp == null) {
+        if (limitApp == null) { // limitApp为null，该规则检查直接通过
             return true;
         }
 
-        if (rule.isClusterMode()) {
+        if (rule.isClusterMode()) { // 集群限流
             return passClusterCheck(rule, context, node, acquireCount, prioritized);
         }
 
-        return passLocalCheck(rule, context, node, acquireCount, prioritized);
+        return passLocalCheck(rule, context, node, acquireCount, prioritized); // 本地限流
     }
 
     private static boolean passLocalCheck(FlowRule rule, Context context, DefaultNode node, int acquireCount,
@@ -114,13 +114,13 @@ public class FlowRuleChecker {
 
     static Node selectNodeByRequesterAndStrategy(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node) {
         // The limit app should not be empty.
-        String limitApp = rule.getLimitApp();
-        int strategy = rule.getStrategy();
-        String origin = context.getOrigin();
+        String limitApp = rule.getLimitApp(); // 不为null
+        int strategy = rule.getStrategy(); // 流控策略
+        String origin = context.getOrigin(); //调用源
 
         if (limitApp.equals(origin) && filterOrigin(origin)) {
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
-                // Matches limit origin, return origin statistic node.
+                // Matches limit origin, return origin statistic node.源节点匹配，返回源的统计节点
                 return context.getOriginNode();
             }
 
@@ -128,7 +128,7 @@ public class FlowRuleChecker {
         } else if (RuleConstant.LIMIT_APP_DEFAULT.equals(limitApp)) {
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
                 // Return the cluster node.
-                return node.getClusterNode();
+                return node.getClusterNode(); // 返回聚合的节点
             }
 
             return selectReferenceNode(rule, context, node);
@@ -165,7 +165,7 @@ public class FlowRuleChecker {
 
     private static boolean fallbackToLocalOrPass(FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                                  boolean prioritized) {
-        if (rule.getClusterConfig().isFallbackToLocalWhenFail()) {
+        if (rule.getClusterConfig().isFallbackToLocalWhenFail()) { // fall back to 本地限流
             return passLocalCheck(rule, context, node, acquireCount, prioritized);
         } else {
             // The rule won't be activated, just pass.

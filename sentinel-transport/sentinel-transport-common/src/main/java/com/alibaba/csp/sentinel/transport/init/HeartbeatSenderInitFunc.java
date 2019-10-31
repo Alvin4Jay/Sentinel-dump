@@ -56,7 +56,7 @@ public class HeartbeatSenderInitFunc implements InitFunc {
         }
 
         initSchedulerIfNeeded();
-        long interval = retrieveInterval(sender);
+        long interval = retrieveInterval(sender); // 心跳间隔
         setIntervalIfNotExists(interval);
         scheduleHeartbeatTask(sender, interval);
     }
@@ -76,7 +76,7 @@ public class HeartbeatSenderInitFunc implements InitFunc {
                 + "in Sentinel config property: " + intervalInConfig);
             return intervalInConfig;
         } else {
-            long senderInterval = sender.intervalMs();
+            long senderInterval = sender.intervalMs(); // 属性未配置时使用默认值
             RecordLog.info("[HeartbeatSenderInit] Heartbeat interval not configured in "
                 + "config property or invalid, using sender default: " + senderInterval);
             return senderInterval;

@@ -42,7 +42,8 @@ public class FlowQpsDemo {
 
     private static volatile boolean stop = false;
 
-    private static final int threadCount = 32;
+//    private static final int threadCount = 32;
+    private static final int threadCount = 1;
 
     private static int seconds = 60 + 40;
 

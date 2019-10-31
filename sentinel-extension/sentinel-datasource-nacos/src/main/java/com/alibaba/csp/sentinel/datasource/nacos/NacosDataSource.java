@@ -103,14 +103,14 @@ public class NacosDataSource<T> extends AbstractDataSource<String, T> {
                     properties, dataId, groupId, configInfo));
                 T newValue = NacosDataSource.this.parser.convert(configInfo);
                 // Update the new value to the property.
-                getProperty().updateValue(newValue);
+                getProperty().updateValue(newValue); // 更行属性源
             }
         };
-        initNacosListener();
+        initNacosListener(); // 初始化配置监听器
         loadInitialConfig();
     }
 
-    private void loadInitialConfig() {
+    private void loadInitialConfig() { // 初始化规则
         try {
             T newValue = loadConfig();
             if (newValue == null) {
@@ -122,7 +122,7 @@ public class NacosDataSource<T> extends AbstractDataSource<String, T> {
         }
     }
 
-    private void initNacosListener() {
+    private void initNacosListener() { // 初始化监听器
         try {
             this.configService = NacosFactory.createConfigService(this.properties);
             // Add config listener.
@@ -138,7 +138,7 @@ public class NacosDataSource<T> extends AbstractDataSource<String, T> {
         if (configService == null) {
             throw new IllegalStateException("Nacos config service has not been initialized or error occurred");
         }
-        return configService.getConfig(dataId, groupId, DEFAULT_TIMEOUT);
+        return configService.getConfig(dataId, groupId, DEFAULT_TIMEOUT); // 获取配置
     }
 
     @Override

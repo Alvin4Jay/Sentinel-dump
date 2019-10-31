@@ -72,6 +72,7 @@ public class SimpleHttpCommandCenter implements CommandCenter {
 
     @Override
     public void start() throws Exception {
+        // 初始化bizExecutor
         int nThreads = Runtime.getRuntime().availableProcessors();
         this.bizExecutor = new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<Runnable>(10),
@@ -89,7 +90,7 @@ public class SimpleHttpCommandCenter implements CommandCenter {
 
             {
                 try {
-                    port = Integer.parseInt(TransportConfig.getPort());
+                    port = Integer.parseInt(TransportConfig.getPort()); // 获取端口
                 } catch (Exception e) {
                     port = DEFAULT_PORT;
                 }
@@ -98,7 +99,7 @@ public class SimpleHttpCommandCenter implements CommandCenter {
             @Override
             public void run() {
                 boolean success = false;
-                ServerSocket serverSocket = getServerSocketFromBasePort(port);
+                ServerSocket serverSocket = getServerSocketFromBasePort(port); // 获取可用端口
 
                 if (serverSocket != null) {
                     CommandCenterLog.info("[CommandCenter] Begin listening at port " + serverSocket.getLocalPort());

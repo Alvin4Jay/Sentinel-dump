@@ -57,7 +57,7 @@ public class ArrayMetric implements Metric {
 
     @Override
     public long success() {
-        data.currentWindow();
+        data.currentWindow(); // update
         long success = 0;
 
         List<MetricBucket> list = data.values();

@@ -183,7 +183,7 @@ public class DegradeRule extends AbstractRule {
 
     @Override
     public boolean passCheck(Context context, DefaultNode node, int acquireCount, Object... args) {
-        if (cut.get()) {
+        if (cut.get()) { // cut表示是否已经熔断
             return false;
         }
 
@@ -193,22 +193,22 @@ public class DegradeRule extends AbstractRule {
         }
 
         if (grade == RuleConstant.DEGRADE_GRADE_RT) {
-            double rt = clusterNode.avgRt();
-            if (rt < this.count) {
-                passCount.set(0);
+            double rt = clusterNode.avgRt(); // 获取平均响应时间
+            if (rt < this.count) { // 小于规则设定的值(响应时间)，通过
+                passCount.set(0); // 只要一次请求正常，则直接清空，重新统计
                 return true;
             }
 
             // Sentinel will degrade the service only if count exceeds.
-            if (passCount.incrementAndGet() < rtSlowRequestAmount) {
+            if (passCount.incrementAndGet() < rtSlowRequestAmount) { // 慢请求数小于默认值5，则通过
                 return true;
             }
-        } else if (grade == RuleConstant.DEGRADE_GRADE_EXCEPTION_RATIO) {
+        } else if (grade == RuleConstant.DEGRADE_GRADE_EXCEPTION_RATIO) { // 基于异常比率
             double exception = clusterNode.exceptionQps();
             double success = clusterNode.successQps();
             double total = clusterNode.totalQps();
             // If total amount is less than minRequestAmount, the request will pass.
-            if (total < minRequestAmount) {
+            if (total < minRequestAmount) { // 总请求小于最小值5，则通过
                 return true;
             }
 
@@ -219,7 +219,7 @@ public class DegradeRule extends AbstractRule {
                 return true;
             }
 
-            if (exception / success < count) {
+            if (exception / success < count) { // 异常率
                 return true;
             }
         } else if (grade == RuleConstant.DEGRADE_GRADE_EXCEPTION_COUNT) {
@@ -228,6 +228,8 @@ public class DegradeRule extends AbstractRule {
                 return true;
             }
         }
+
+        // 以上是降级通过的情况，下面是降级逻辑
 
         if (cut.compareAndSet(false, true)) {
             ResetTask resetTask = new ResetTask(this);

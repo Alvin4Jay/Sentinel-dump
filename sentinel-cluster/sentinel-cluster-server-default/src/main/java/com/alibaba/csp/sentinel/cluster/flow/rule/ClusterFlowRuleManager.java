@@ -103,6 +103,7 @@ public final class ClusterFlowRuleManager {
         registerPropertyInternal(defaultNamespace, defaultProperty);
     }
 
+    // Supplier 类型：接受 namespace，返回生成的动态规则源，类型为 SentinelProperty<List<FlowRule>>
     public static void setPropertySupplier(Function<String, SentinelProperty<List<FlowRule>>> propertySupplier) {
         AssertUtil.notNull(propertySupplier, "flow rule property supplier cannot be null");
         ClusterFlowRuleManager.propertySupplier = propertySupplier;

@@ -141,7 +141,7 @@ public final class FlowRuleUtil {
             switch (rule.getControlBehavior()) {
                 case RuleConstant.CONTROL_BEHAVIOR_WARM_UP:
                     return new WarmUpController(rule.getCount(), rule.getWarmUpPeriodSec(),
-                        ColdFactorProperty.coldFactor);
+                        ColdFactorProperty.coldFactor); // coldFactor: 3
                 case RuleConstant.CONTROL_BEHAVIOR_RATE_LIMITER:
                     return new RateLimiterController(rule.getMaxQueueingTimeMs(), rule.getCount());
                 case RuleConstant.CONTROL_BEHAVIOR_WARM_UP_RATE_LIMITER:
@@ -149,7 +149,7 @@ public final class FlowRuleUtil {
                         rule.getMaxQueueingTimeMs(), ColdFactorProperty.coldFactor);
                 case RuleConstant.CONTROL_BEHAVIOR_DEFAULT:
                 default:
-                    // Default mode or unknown mode: default traffic shaping controller (fast-reject).
+                    // Default mode or unknown mode: default traffic shaping controller (fast-reject). 快速拒绝
             }
         }
         return new DefaultController(rule.getCount(), rule.getGrade());

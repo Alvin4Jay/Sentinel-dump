@@ -52,26 +52,30 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
     public void entry(Context context, ResourceWrapper resourceWrapper, DefaultNode node, int count,
                       boolean prioritized, Object... args) throws Throwable {
         try {
-            // Do some checking.
+            // Do some checking. 触发下一个Slot的entry方法，进行限流、降级等检测
             fireEntry(context, resourceWrapper, node, count, prioritized, args);
 
+            // 如果能通过SlotChain中后面的Slot的entry方法，说明没有被限流或降级
+            // 统计信息
             // Request passed, add thread count and pass count.
             node.increaseThreadNum();
             node.addPassRequest(count);
 
+            // 源节点StatisticNode计数
             if (context.getCurEntry().getOriginNode() != null) {
-                // Add count for origin node.
+                // Add count for origin node. 源节点StatisticNode计数
                 context.getCurEntry().getOriginNode().increaseThreadNum();
                 context.getCurEntry().getOriginNode().addPassRequest(count);
             }
 
+            // 全局入流量统计
             if (resourceWrapper.getType() == EntryType.IN) {
                 // Add count for global inbound entry node for global statistics.
                 Constants.ENTRY_NODE.increaseThreadNum();
                 Constants.ENTRY_NODE.addPassRequest(count);
             }
 
-            // Handle pass event with registered entry callback handlers.
+            // Handle pass event with registered entry callback handlers. 回调处理
             for (ProcessorSlotEntryCallback<DefaultNode> handler : StatisticSlotCallbackRegistry.getEntryCallbacks()) {
                 handler.onPass(context, resourceWrapper, node, count, args);
             }
@@ -92,14 +96,15 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
             }
         } catch (BlockException e) {
             // Blocked, set block exception to current entry.
-            context.getCurEntry().setError(e);
+            context.getCurEntry().setError(e); // 设置异常
 
-            // Add block count.
+            // Add block count. Block计数
             node.increaseBlockQps(count);
             if (context.getCurEntry().getOriginNode() != null) {
                 context.getCurEntry().getOriginNode().increaseBlockQps(count);
             }
 
+            // 全局入流量统计
             if (resourceWrapper.getType() == EntryType.IN) {
                 // Add count for global inbound entry node for global statistics.
                 Constants.ENTRY_NODE.increaseBlockQps(count);
@@ -112,7 +117,7 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
 
             throw e;
         } catch (Throwable e) {
-            // Unexpected error, set error to current entry.
+            // Unexpected error, set error to current entry. 未知异常
             context.getCurEntry().setError(e);
 
             // This should not happen.
@@ -134,25 +139,25 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
 
         if (context.getCurEntry().getError() == null) {
             // Calculate response time (max RT is TIME_DROP_VALVE).
-            long rt = TimeUtil.currentTimeMillis() - context.getCurEntry().getCreateTime();
-            if (rt > Constants.TIME_DROP_VALVE) {
+            long rt = TimeUtil.currentTimeMillis() - context.getCurEntry().getCreateTime(); // 响应时间统计
+            if (rt > Constants.TIME_DROP_VALVE) { // 超过4900ms，则为4900ms
                 rt = Constants.TIME_DROP_VALVE;
             }
 
-            // Record response time and success count.
+            // Record response time and success count. 当前节点统计rt和success count
             node.addRtAndSuccess(rt, count);
             if (context.getCurEntry().getOriginNode() != null) {
                 context.getCurEntry().getOriginNode().addRtAndSuccess(rt, count);
             }
 
-            node.decreaseThreadNum();
+            node.decreaseThreadNum(); // 线程数减1
 
             if (context.getCurEntry().getOriginNode() != null) {
                 context.getCurEntry().getOriginNode().decreaseThreadNum();
             }
 
             if (resourceWrapper.getType() == EntryType.IN) {
-                Constants.ENTRY_NODE.addRtAndSuccess(rt, count);
+                Constants.ENTRY_NODE.addRtAndSuccess(rt, count); // 全局入流量统计
                 Constants.ENTRY_NODE.decreaseThreadNum();
             }
         } else {

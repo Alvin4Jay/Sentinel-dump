@@ -46,10 +46,10 @@ public final class InitExecutor {
             List<OrderWrapper> initList = new ArrayList<OrderWrapper>();
             for (InitFunc initFunc : loader) {
                 RecordLog.info("[InitExecutor] Found init func: " + initFunc.getClass().getCanonicalName());
-                insertSorted(initList, initFunc);
+                insertSorted(initList, initFunc); // 插入(并排序)
             }
             for (OrderWrapper w : initList) {
-                w.func.init();
+                w.func.init(); // 初始化
                 RecordLog.info(String.format("[InitExecutor] Executing %s with order %d",
                     w.func.getClass().getCanonicalName(), w.order));
             }

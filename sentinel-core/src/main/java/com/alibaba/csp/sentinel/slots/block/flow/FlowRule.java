@@ -77,7 +77,7 @@ public class FlowRule extends AbstractRule {
      * 0. default(reject directly), 1. warm up, 2. rate limiter, 3. warm up + rate limiter
      */
     private int controlBehavior = RuleConstant.CONTROL_BEHAVIOR_DEFAULT;
-
+    // 10s
     private int warmUpPeriodSec = 10;
 
     /**
@@ -85,11 +85,11 @@ public class FlowRule extends AbstractRule {
      */
     private int maxQueueingTimeMs = 500;
 
-    private boolean clusterMode;
+    private boolean clusterMode; // 标识是否为集群限流配置
     /**
      * Flow rule config for cluster mode.
      */
-    private ClusterFlowConfig clusterConfig;
+    private ClusterFlowConfig clusterConfig; // 集群限流相关配置项
 
     /**
      * The traffic shaping (throttling) controller.

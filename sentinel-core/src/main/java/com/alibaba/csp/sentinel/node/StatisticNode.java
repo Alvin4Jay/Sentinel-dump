@@ -282,11 +282,11 @@ public class StatisticNode implements Node {
         double maxCount = threshold * IntervalProperty.INTERVAL / 1000;
         long currentBorrow = rollingCounterInSecond.waiting();
         if (currentBorrow >= maxCount) {
-            return OccupyTimeoutProperty.getOccupyTimeout();
+            return OccupyTimeoutProperty.getOccupyTimeout(); // occupy失败
         }
 
-        int windowLength = IntervalProperty.INTERVAL / SampleCountProperty.SAMPLE_COUNT;
-        long earliestTime = currentTime - currentTime % windowLength + windowLength - IntervalProperty.INTERVAL;
+        int windowLength = IntervalProperty.INTERVAL / SampleCountProperty.SAMPLE_COUNT; // 窗口长度
+        long earliestTime = currentTime - currentTime % windowLength + windowLength - IntervalProperty.INTERVAL; // 滑动窗口最早时间
 
         int idx = 0;
         /*

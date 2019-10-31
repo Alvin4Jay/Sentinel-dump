@@ -78,7 +78,7 @@ public final class DegradeRuleManager {
         }
 
         for (DegradeRule rule : rules) {
-            if (!rule.passCheck(context, node, count)) {
+            if (!rule.passCheck(context, node, count)) { // 降级规则检查
                 throw new DegradeException(rule.getLimitApp(), rule);
             }
         }
@@ -166,6 +166,7 @@ public final class DegradeRuleManager {
 
         @Override
         public void configLoad(List<DegradeRule> conf) {
+            // 当规则变动时，重新加载所有降级规则，原来降级规则中的数据无效
             Map<String, Set<DegradeRule>> rules = loadDegradeConf(conf);
             if (rules != null) {
                 degradeRules.clear();

@@ -95,7 +95,7 @@ public class SimpleHttpHeartbeatSender implements HeartbeatSender {
         return addressList.get(index);
     }
 
-    private List<InetSocketAddress> getDefaultConsoleIps() {
+    private List<InetSocketAddress> getDefaultConsoleIps() { // 获取控制台ip地址
         List<InetSocketAddress> newAddrs = new ArrayList<InetSocketAddress>();
         try {
             String ipsStr = TransportConfig.getConsoleServer();

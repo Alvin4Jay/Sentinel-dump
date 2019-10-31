@@ -32,7 +32,7 @@ import com.alibaba.csp.sentinel.init.InitOrder;
  * @since 1.4.0
  */
 @InitOrder(0)
-public class DefaultClusterClientInitFunc implements InitFunc {
+public class DefaultClusterClientInitFunc implements InitFunc { // 集群客户端初始化
 
     @Override
     public void init() throws Exception {

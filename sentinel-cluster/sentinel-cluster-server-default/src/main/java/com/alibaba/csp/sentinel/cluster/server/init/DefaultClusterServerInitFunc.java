@@ -42,7 +42,7 @@ public class DefaultClusterServerInitFunc implements InitFunc {
         initDefaultProcessors();
 
         // Eagerly-trigger the SPI pre-load of token service.
-        TokenServiceProvider.getService();
+        TokenServiceProvider.getService(); // TokenService
 
         RecordLog.info("[DefaultClusterServerInitFunc] Default entity codec and processors registered");
     }

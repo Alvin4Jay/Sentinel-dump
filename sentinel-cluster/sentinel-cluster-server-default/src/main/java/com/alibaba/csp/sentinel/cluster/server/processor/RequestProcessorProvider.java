@@ -37,7 +37,7 @@ public final class RequestProcessorProvider {
     }
 
     private static void loadAndInit() {
-        for (RequestProcessor processor : SERVICE_LOADER) {
+        for (RequestProcessor processor : SERVICE_LOADER) { // 请求处理器RequestProcessor分类
             Integer type = parseRequestType(processor);
             if (type != null) {
                 PROCESSOR_MAP.put(type, processor);
